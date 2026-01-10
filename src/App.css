@@ -1,0 +1,486 @@
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* prevent scrolling */
+}
+
+.bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Header fixed at top right */
+.header-right-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(16, 230, 212, 0.25);
+  color: white;
+  z-index: 2;
+  border-bottom-left-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-left-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: flex-start; /* align children to top */
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(16, 230, 212, 0.25);
+  color: white;
+  z-index: 2;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Constrain the logo image */
+.header-left-container img {
+  height: 60px;       /* adjust as needed */
+  width: auto;        /* maintain aspect ratio */
+  display: block;     /* remove inline spacing issues */
+}
+
+
+.footer-right-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(16, 230, 212, 0.25);
+  color: white;
+  z-index: 2;
+  border-top-left-radius: 8px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.foreground {
+  position: absolute;
+  top: 60px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 1;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.6rem 2.2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column; /* stack lines if multiple */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 2.5rem;
+  line-height: 1.2;
+  transition: background-color 150ms ease,
+              transform 120ms ease,
+              box-shadow 120ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+
+.btn-white {
+  background-color: white;
+  color: black;
+}
+
+.btn-teal {
+  background-color: teal;
+  color: white;
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}
+
+.box {
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: center;
+  max-width: 420px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.raw-json {
+  max-height: 50vh;
+  overflow: auto;
+  background: #0b1020;
+  color: #e5e7eb;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.plot-box {
+  width: 100%;
+  height: 60vh;
+  min-height: 320px;
+  max-height: 700px;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Container for the dropdown */
+.examples-container {
+  position: absolute;       /* floats over content */
+  top: 100%;                /* directly below the button */
+  left: 0;                  /* aligned to left of parent */
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 220px;             /* adjust as needed */
+  padding: 8px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 10;              /* sits above other content */
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Each individual example in the dropdown */
+.example-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333333;
+  user-select: none;        /* prevents text highlighting on click */
+  transition: background-color 0.2s ease;
+}
+
+.example-item:hover {
+  background-color: #f0f0f0;  /* subtle hover effect */
+}
+
+
+/* DATA FILE UPLOADER START ----------------------------- */
+
+.uploader {
+  position: relative;
+  width: 400px;
+  padding: 1.5rem;
+  border: 1px dashed #9ca3af;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.uploader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -0.5rem -0.5rem 1rem -0.5rem;
+}
+
+.uploader-switch {
+  background: transparent;
+  border: 1px solid #9ca3af;
+  border-radius: 9999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+
+  transition: background-color 120ms ease,
+              color 120ms ease,
+              border-color 120ms ease;
+}
+
+.uploader-switch:hover {
+  background-color: #f3f4f6;
+  border-color: #6b7280;
+}
+
+.uploader-switch:active {
+  background-color: #e5e7eb;
+}
+
+.uploader-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: black;
+}
+
+.uploader-title {
+  margin-bottom: 1rem;
+  color: black;
+}
+
+.uploader-select {
+  display: inline-block;
+  margin-bottom: 1rem;
+  background-color: #2563eb;
+  color: white;
+}
+
+.uploader-save {
+  display: inline-block;
+  margin-top: 1rem;
+  background-color: #16a34a;
+  color: white;
+}
+
+.uploader-filename {
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+
+.uploader-success {
+  margin-top: 0.5rem;
+  color: #16a34a;
+}
+
+.uploader-error {
+  margin-top: 0.5rem;
+  color: #dc2626;
+}
+
+.uploader-dropzone {
+  display: inline-flex;       /* keep flex to center vertically */
+  flex-direction: row;        /* override column from .btn */
+  align-items: center;        /* vertical centering */
+  justify-content: center;    /* horizontal centering */
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  background-color: #1d8c82;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.2;
+  transition: background-color 150ms ease, transform 120ms ease;
+}
+
+
+.uploader-dropzone:hover {
+  background-color: #1c8077;
+}
+
+.uploader-dropzone.uploading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* DATA FILE UPLOADER FINISH $$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
+
+
+/* GRAPH INFO START ------------------------------------- */
+
+.graph-page-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.graph {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.graph-helper {
+  width: 320px;
+  padding: 16px;
+  box-sizing: border-box;
+  border-left: 1px solid #e0e0e0;
+  background-color: #312d2d;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.graph-helper h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+}
+
+.graph-helper button {
+  padding: 8px 12px;
+  cursor: pointer;
+  align-items: center;
+  margin: 0 auto;
+}
+
+/* GRAPH INFO FINISH $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
+
+
+/* EXPLANATION PAGE START ------------------------------- */
+
+/* PAGE LAYOUT */
+.explanation-page-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  font-family: sans-serif;
+  color: white;
+  background-color: #0b1020;
+  gap: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* LEFT SIDE */
+.explanation-page-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+/* CONTAINER HOLDING THE TOP EXPLANATION BOXES */
+.explanation-top-container {
+  display: flex;
+  height: 30%;
+  gap: 16px;
+}
+
+.explanation-top-container-math {
+  display: flex;
+  height: 15%;
+  gap: 16px;
+}
+
+/* EACH TOP BOX */
+.explanation-top-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(16, 230, 212, 0.05));
+  border: 1px solid rgba(16, 230, 212, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 10px rgba(16, 230, 212, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* TITLE STAYS AT TOP */
+.explanation-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+  color: #10e6d4;
+}
+
+/* DESCRIPTION FILLS SPACE AND CENTERS ITS TEXT VERTICALLY */
+.explanation-description {
+  flex: 1;
+  display: flex;
+  align-items: center;   /* vertical centering */
+  justify-content: center; /* horizontal centering */
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* HOVER EFFECT */
+.explanation-top-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 15px rgba(16, 230, 212, 0.2);
+}
+
+/* BOTTOM 3/5 EXAMPLE BOX */
+.explanation-example {
+  flex: 1; /* takes remaining space */
+  padding: 16px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(16, 230, 212, 0.05));
+  border: 1px solid rgba(16, 230, 212, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 10px rgba(16, 230, 212, 0.1);
+  overflow-y: auto;
+}
+
+/* ABOVE BTN TEXT */
+.explanation-above-btn {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+
+/* RIGHT SIDE */
+.explanation-page-right {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  border-left: 1px solid rgba(16, 230, 212, 0.3);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(16, 230, 212, 0.1));
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: 12px 0 0 12px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 0 10px rgba(16, 230, 212, 0.1);
+}
+
+
+
+/* EXPLANATION PAGE END $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
